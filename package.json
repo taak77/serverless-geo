@@ -1,0 +1,19 @@
+{
+  "name": "serverless-geo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "handler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Takashi Aoki",
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "maxmind": "^2.7.0"
+  },
+  "devDependencies": {
+    "serverless-plugin-warmup": "^3.6.2-rc.1",
+    "serverless-stage-manager": "^1.0.5"
+  }
+}
