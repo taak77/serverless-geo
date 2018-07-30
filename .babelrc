@@ -1,0 +1,10 @@
+{
+  "comments": false,
+  "presets": [
+    [ "env", { "targets": { "node": "8.10" } } ]
+  ],
+  "plugins": [
+    "source-map-support",
+    "syntax-object-rest-spread"
+  ]
+}

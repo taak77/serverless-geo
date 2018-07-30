@@ -18,6 +18,9 @@ custom:
     - dev
     - staging
     - prod
+  webpack:
+    webpackConfig: 'webpack.config.js'   # Name of webpack configuration file
+    includeModules: false   # Node modules configuration for packaging
 
 provider:
   name: aws
@@ -39,6 +42,7 @@ provider:
   region: ${opt:region, 'us-west-1'}
 
 plugins:
+  - serverless-webpack
   - serverless-plugin-warmup
   - serverless-stage-manager
 

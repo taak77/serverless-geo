@@ -13,7 +13,16 @@
     "maxmind": "^2.7.0"
   },
   "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "babel-plugin-source-map-support": "^2.0.1",
+    "babel-plugin-syntax-object-rest-spread": "^6.13.0",
+    "babel-preset-env": "^1.7.0",
+    "copy-webpack-plugin": "^4.5.2",
     "serverless-plugin-warmup": "^3.6.2-rc.1",
-    "serverless-stage-manager": "^1.0.5"
+    "serverless-stage-manager": "^1.0.5",
+    "serverless-webpack": "^5.2.0",
+    "webpack": "^4.16.3",
+    "webpack-node-externals": "^1.7.2"
   }
 }
