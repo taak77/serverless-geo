@@ -14,6 +14,7 @@
 service: geolocation-api
 
 custom:
+  apiVersion: v1
   stages:
     - dev
     - staging
@@ -50,10 +51,10 @@ plugins:
 
 functions:
   fetchLocationData:
-    handler: handler.fetchLocationData
+    handler: src/handler.fetchLocationData
     warmup: true
     events:
       - http:
-          path: location
+          path: ${self:custom.apiVersion}/location
           method: get
           cors: true
