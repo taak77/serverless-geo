@@ -4,5 +4,7 @@ jspm_packages
 
 # Serverless directories
 .serverless
-
+.webpack
 .idea
+
+_warmup

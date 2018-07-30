@@ -15,16 +15,20 @@ module.exports.fetchLocationData = async (event = {}, context) => {
 
 	const {
 		headers = {},
-		queryStringParameters = {},
 		requestContext = {}
 	} = event;
+	// `queryStringParameters` defaults to `null`
+	const queryStringParameters = event.queryStringParameters || {};
 	const isDebug = queryStringParameters.debug === 'true';
 
 	if (queryStringParameters.mock) {
-		return Promise.resolve(queryStringParameters.mock === 'event' ? {
-			event: event
-		} : {
-			context: context
+		return Promise.resolve({
+			statusCode: 200,
+			body: JSON.stringify(queryStringParameters.mock === 'event' ? {
+				event
+			} : {
+				context
+			})
 		});
 	}
 
@@ -41,7 +45,8 @@ module.exports.fetchLocationData = async (event = {}, context) => {
 	let cityData;
 	let countryData;
 
-	let response = {};
+	let statusCode = 200;
+	let body = {};
 
 	try {
 		if (headers['CloudFront-Is-Desktop-Viewer'] === 'true') {
@@ -57,39 +62,37 @@ module.exports.fetchLocationData = async (event = {}, context) => {
 		cityData = await cityLookup.get(ip);
 		countryData = await countryLookup.get(ip);
 
-		response = {
-			statusCode: 200,
-			body: JSON.stringify({
-				success: true,
-				device: device,
-				ip: ip,
-				city: cityData,
-				country: countryData
-			})
+		body = {
+			success: true,
+			device,
+			ip,
+			city: cityData,
+			country: countryData
 		};
 	} catch (err) {
 		console.log('Lookup failed!', err);
-		response = {
-			statusCode: 500,
-			body: JSON.stringify({
-				success: false,
-				error: err.message
-			})
+		statusCode = 500;
+		body = {
+			success: false,
+			error: err.message
 		};
 	}
 
-	response = {
-		...response,
+	body = {
+		...body,
 		env: requestContext.stage
 	};
 
 	if (isDebug) {
-		response = {
-			...response,
-			event: event,
-			context: context
+		body = {
+			...body,
+			event,
+			context
 		};
 	}
 
-	return Promise.resolve(response);
+	return Promise.resolve({
+		statusCode,
+		body: JSON.stringify(body)
+	});
 };

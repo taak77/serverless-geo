@@ -5,7 +5,9 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 
 module.exports = {
-  entry: './handler.js',
+  entry: {
+    handler: './handler.js'
+  },
   target: 'node',
   mode: slsw.lib.webpack.isLocal ? 'development': 'production',
   optimization: {
@@ -22,7 +24,7 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
-        exclude: /node_modules/,
+        exclude: /(node_modules|_warmup)/,
         use: [
           {
             loader: 'babel-loader'
@@ -34,13 +36,14 @@ module.exports = {
   plugins: [
     new CopyWebpackPlugin([
         './GeoLite2-City.mmdb',
-        './GeoLite2-Country.mmdb'
+        './GeoLite2-Country.mmdb',
+		{ from: '_warmup', to: '_warmup' }
     ])
   ],
   output: {
-    libraryTarget: 'commonjs2',
+    libraryTarget: 'commonjs',
     path: path.join(__dirname, '.webpack'),
-    filename: 'handler.js',
+    filename: '[name].js',
     sourceMapFilename: '[file].map'
   }
 };
