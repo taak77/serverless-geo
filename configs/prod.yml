@@ -1,0 +1,4 @@
+domainName: api.taoki.me
+certificateArn:
+  us-west-1: arn:aws:acm:us-west-1:292219442923:certificate/c5559744-6b04-4dff-bbe9-aa1bb75e36eb
+  us-east-1: arn:aws:acm:us-east-1:292219442923:certificate/22c2e85e-e070-45cf-ab30-0f5bc2e520ea

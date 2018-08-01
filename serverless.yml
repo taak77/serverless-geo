@@ -13,17 +13,30 @@
 
 service: geolocation-api
 
+frameworkVersion: '>=1.25.0'
+
 custom:
-  apiVersion: v1
   stages:
     - dev
     - staging
     - prod
+  env: ${file(./configs/${self:provider.stage}.yml)}
   webpack:
-    webpackConfig: 'webpack.config.js'   # Name of webpack configuration file
+    webpackConfig: 'webpack.config.js' # Name of webpack configuration file
     includeModules: true
   warmup:
     cleanFolder: false
+    schedule: 'cron(0/5 8-17 ? * MON-FRI *)' # Run WarmUP every 5 minutes Mon-Fri between 8:00am and 5:55pm (UTC)
+    timeout: 20
+    prewarm: true # Run WarmUp immediately after a deploymentlambda
+  customDomain:
+    domainName: ${self:custom.env.domainName}
+    stage: ${self:provider.stage}
+    basePath: 'v1' # Not working :(
+    certificateArn: ${self:custom.env.certificateArn.${self:provider.region}}
+    certificateRegion: ${opt:region}
+    createRoute53Record: true
+    endpointType: 'regional'
 
 provider:
   name: aws
@@ -43,18 +56,27 @@ provider:
 
   stage: ${opt:stage,'dev'}
   region: ${opt:region, 'us-west-1'}
+  endpointType: regional
+
+resources:
+  Resources:
+    ApiGatewayRestApi:
+      Type: AWS::ApiGateway::RestApi
+      Properties:
+        Name: ${self:service}-${self:provider.stage}
 
 plugins:
   - serverless-webpack
   - serverless-plugin-warmup
   - serverless-stage-manager
+  - serverless-domain-manager
 
 functions:
   fetchLocationData:
     handler: src/handler.fetchLocationData
-    warmup: true
+    warmup: production
     events:
       - http:
-          path: ${self:custom.apiVersion}/location
+          path: location
           method: get
           cors: true

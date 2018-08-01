@@ -10,7 +10,7 @@ const openDb = bluebird.promisify(maxmind.open);
 let cityLookup;
 let countryLookup;
 
-export async function fetchLocationData(event = {}, context) {
+export async function fetchLocationData(event = {}, context = {}) {
 	if (event.source === 'serverless-plugin-warmup') {
 		console.log('WarmUP - Lambda is warm!');
 		return Promise.resolve('Lambda is warm!');
@@ -40,6 +40,7 @@ export async function fetchLocationData(event = {}, context) {
 	let device = Devices.DESKTOP;
 	let cityData;
 	let countryData;
+	let region;
 	let statusCode = 200;
 	let body = {};
 
@@ -82,9 +83,15 @@ export async function fetchLocationData(event = {}, context) {
 		};
 	}
 
+	const { invokedFunctionArn } = context;
+	if (invokedFunctionArn) {
+		region = invokedFunctionArn.split(':')[3];
+	}
+
 	body = {
 		...body,
-		env: requestContext.stage
+		env: requestContext.stage,
+		region
 	};
 
 	if (isDebug) {
